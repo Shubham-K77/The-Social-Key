@@ -6,6 +6,9 @@ export default {
     fontFamily: {
       merriweather: '"Merriweather", serif',
       openSans: '"Open Sans", sans-serif',
+      dancing: '"Dancing Script", cursive',
+      copyRight: '"Geist Mono", monospace',
+      roboto: '"Roboto", sans-seri',
     },
   },
   plugins: [],
