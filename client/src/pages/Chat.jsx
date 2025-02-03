@@ -52,14 +52,15 @@ const Chat = () => {
       }`}
     >
       <Navbar />
-      <div className="mt-[2rem] mb-[2rem] w-[95%] lg:w-[85%] bg-amber-500 flex flex-col justify-start items-center lg:flex-row lg:justify-around lg:items-start">
-        <div className="mt-2 mb-2 w-[95%] lg:w-[25%] bg-purple-400 rounded-md flex flex-col justify-start items-center">
+      <div className="mt-[2rem] mb-[2rem] w-[95%] lg:w-[85%] bg-transparent flex flex-col justify-start items-center lg:flex-row lg:justify-around lg:items-start">
+        {/* Container-1 */}
+        <div className="mt-2 mb-2 w-[95%] lg:w-[25%] bg-transparent rounded-md flex flex-col justify-start items-center">
           <div className="text-[1.25rem] font-semibold mb-2 mt-2">
             Your Conversations
           </div>
           <div className="w-[95%] h-[10vh] flex justify-center items-center bg-transparent mb-2">
             <input
-              className="w-[75%] h-[7vh] rounded-md p-2 text-[1.05rem] font-semibold placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-green-400 focus:border-green-400 mr-2 bg-transparent"
+              className="w-[75%] h-[7vh] rounded-md p-2 text-[1.05rem] font-semibold placeholder-slate-400 border-2 border-gray-400 focus:outline-none focus:ring-2 focus:ring-green-400 focus:border-green-400 mr-2 bg-transparent"
               placeholder="Search For User"
               onChange={(e) => setSearch(e.target.value)}
               value={search}
@@ -85,6 +86,8 @@ const Chat = () => {
           <Conversation />
           <Conversation />
         </div>
+        {/* Container-2 */}
+
         {/* Not Selected Any Conversation! */}
         {/* <div className="w-[95%] h-[140vh] lg:w-[70%] lg:h-[140vh] bg-orange-600 flex flex-col justify-center items-center">
           <div className="mb-2 mt-2 flex justify-center items-center">
@@ -94,6 +97,7 @@ const Chat = () => {
             Select a conversation to start messaging
           </div>
         </div> */}
+
         {/* Conversation Is Selected! */}
         <MessageContainer />
       </div>

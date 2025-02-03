@@ -8,7 +8,7 @@ const Message = ({ ownMessage }) => {
     >
       {ownMessage ? (
         <>
-          <div className="w-[60%] lg:w-[80%] flex flex-col justify-start items-end text-white bg-green-300 p-2 rounded-md">
+          <div className="w-[60%] lg:w-[80%] flex flex-col justify-start items-end text-white bg-green-400 p-2 rounded-md">
             <div className="text-[1.05rem] font-semibold mb-2">username</div>
             <div className="text-[0.95rem] lg:text-[0.85rem] text-right">
               Lorem ipsum dolor sit amet consectetur adipisicing elit. Nihil id

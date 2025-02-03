@@ -74,7 +74,8 @@ const PostPage = () => {
         setVoiceLoading(true);
         const response = await axios.post(
           "http://localhost:5555/api/v1/posts/tts",
-          { prompt: currentPost.text }
+          { prompt: currentPost.text },
+          {withCredentials: true}
         );
         const audioResponseArray = await response.data.data.data;
         const encodedArray = new Uint8Array(audioResponseArray);
