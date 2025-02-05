@@ -1,5 +1,10 @@
 /* eslint-disable react/prop-types */
-const Message = ({ ownMessage }) => {
+import { useSelector } from "react-redux";
+const Message = ({ ownMessage, message }) => {
+  const conversation = useSelector(
+    (state) => state.conversation.selectedConversations
+  );
+  const currentUser = useSelector((state) => state.user.userInfo);
   return (
     <div
       className={`w-full bg-transparent flex flex-row items-center mb-2 p-2 transition-all ease-in-out duration-150 hover:cursor-pointer hover:scale-105 ${
@@ -8,24 +13,45 @@ const Message = ({ ownMessage }) => {
     >
       {ownMessage ? (
         <>
-          <div className="w-[60%] lg:w-[80%] flex flex-col justify-start items-end text-white bg-green-400 p-2 rounded-md">
-            <div className="text-[1.05rem] font-semibold mb-2">username</div>
+          <div className="w-[60%] lg:w-[80%] flex flex-col justify-start items-end text-white bg-green-400 p-2 rounded-md hover:rounded-none">
+            <div className="text-[1.05rem] font-semibold mb-2">
+              {currentUser.username}
+            </div>
             <div className="text-[0.95rem] lg:text-[0.85rem] text-right">
-              Lorem ipsum dolor sit amet consectetur adipisicing elit. Nihil id
-              aliquam rem voluptas culpa repellat deleniti recusandae error
-              reiciendis animi.
+              {message.text}
             </div>
           </div>
-          <div className="w-[32%] lg:w-[12%] h-[12vh] rounded-[50%] bg-sky-700 shadow-md ml-4"></div>
+          <div
+            className="w-[28%] lg:w-[10%] h-[11vh] rounded-[50%] shadow-md ml-4"
+            style={{
+              backgroundImage: `url(${
+                currentUser.profilePic || "/Images/avatar.png"
+              })`,
+              backgroundPosition: "center",
+              backgroundRepeat: "no-repeat",
+              backgroundSize: "cover",
+            }}
+          ></div>
         </>
       ) : (
         <>
-          <div className="w-[32%] lg:w-[11.5%] h-[12vh] rounded-[50%] bg-sky-700 shadow-md mr-4"></div>
-          <div className="w-[60%] lg:w-[80%] flex flex-col justify-start items-start bg-sky-400 text-white p-2 rounded-md">
-            <div className="text-[1.05rem] font-semibold mb-2">username</div>
+          <div
+            className="w-[28%] lg:w-[10%] h-[11vh] rounded-[50%] shadow-md mr-4"
+            style={{
+              backgroundImage: `url(${
+                conversation.userProfilePic || "/Images/avatar.png"
+              })`,
+              backgroundPosition: "center",
+              backgroundRepeat: "no-repeat",
+              backgroundSize: "cover",
+            }}
+          ></div>
+          <div className="w-[60%] lg:w-[80%] flex flex-col justify-start items-start bg-sky-400 text-white p-2 rounded-md hover:rounded-none">
+            <div className="text-[1.05rem] font-semibold mb-2">
+              {conversation.username}
+            </div>
             <div className="text-[0.95rem] lg:text-[0.85rem]">
-              Lorem ipsum, dolor sit amet consectetur adipisicing elit. Ea
-              temporibus veniam voluptatum voluptates. Aperiam, quasi.
+              {message.text}
             </div>
           </div>
         </>

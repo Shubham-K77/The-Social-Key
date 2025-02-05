@@ -10,13 +10,22 @@ import { MdOutlinePersonSearch } from "react-icons/md";
 import Conversation from "../components/Conversation";
 import { GiConversation } from "react-icons/gi";
 import { MessageContainer } from "../components/MessageContainer";
+import { setConversations } from "../../slices/conversations";
+import { ImSpinner8 } from "react-icons/im";
+import { setSelectedConversations } from "../../slices/conversations";
 const Chat = () => {
   const currentTheme = useSelector((state) => state.themeToggler.theme);
   const currentUser = useSelector((state) => state.user.userInfo);
+  const conversation = useSelector((state) => state.conversation.conversations);
+  const selectedConversation = useSelector(
+    (state) => state.conversation.selectedConversations
+  );
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { enqueueSnackbar } = useSnackbar();
   const [search, setSearch] = useState("");
+  const [loadingConversation, setLoadingConversation] = useState(true);
+  const [searchLoading, setSearchLoading] = useState(false);
   //Retrieve User For Every Render!
   useEffect(() => {
     const retrieveUser = async () => {
@@ -43,6 +52,83 @@ const Chat = () => {
     retrieveUser();
   }, [currentUser, dispatch, enqueueSnackbar, navigate]);
 
+  //Retrieve The Conversations:
+  useEffect(() => {
+    const fetchConversation = async () => {
+      try {
+        const response = await axios.get(
+          "http://localhost:5555/api/v1/messages/conversations",
+          { withCredentials: true }
+        );
+        dispatch(setConversations(response?.data?.conversation));
+        setLoadingConversation(false);
+      } catch (error) {
+        let message =
+          "Unable To Get Conversations!" || error?.response?.data?.message;
+        enqueueSnackbar(message, { variant: "error" });
+        setLoadingConversation(false);
+      }
+    };
+    fetchConversation();
+  }, [dispatch, enqueueSnackbar, conversation]);
+
+  //Handle Search
+  const handleSearch = async () => {
+    if (!search) return;
+    setSearchLoading(true);
+    try {
+      const response = await axios.get(
+        `http://localhost:5555/api/v1/users/profile/${search}`
+      );
+      const searchedUser = response.data.userExists;
+      const messagingYourself = searchedUser._id === currentUser._id;
+      if (messagingYourself) {
+        setSearchLoading(false);
+        return enqueueSnackbar("You Can't Message Yourself!", {
+          variant: "info",
+        });
+      }
+      const conversationAlreadyExists = conversation.find(
+        (conversation) => conversation.participants[0]._id === searchedUser._id
+      );
+      if (conversationAlreadyExists) {
+        dispatch(
+          setSelectedConversations({
+            _id: conversationAlreadyExists._id,
+            userId: searchedUser._id,
+            username: searchedUser.username,
+            userProfilePic: searchedUser.profilePic,
+          })
+        );
+        enqueueSnackbar("Messages Found!", { variant: "success" });
+        return setSearchLoading(false);
+      }
+      const mockConversation = {
+        mock: true,
+        lastMessage: {
+          text: "",
+          sender: {},
+        },
+        _id: Date.now(),
+        participants: [
+          {
+            _id: searchedUser._id,
+            username: searchedUser.username,
+            profilePic: searchedUser.profilePic,
+          },
+        ],
+      };
+      setConversations((prevConvos) => [...prevConvos, mockConversation]);
+      setSearchLoading(false);
+    } catch (error) {
+      let message =
+        "Unable To Search For User!" || error.response?.data?.message;
+      enqueueSnackbar(message, { variant: "error" });
+      setSearchLoading(false);
+    }
+  };
+
+  //Render:
   return (
     <div
       className={`w-full min-h-screen flex flex-col justify-start items-center ${
@@ -65,41 +151,55 @@ const Chat = () => {
               onChange={(e) => setSearch(e.target.value)}
               value={search}
             />
-            <button className="w-[20%] h-[8vh] rounded-md shadow-md bg-gradient-to-br to-rose-400 from-sky-400 text-white flex justify-center items-center transition-all ease-in-out duration-500 hover:scale-105">
-              <MdOutlinePersonSearch className="text-[2rem]" />
+            <button
+              className="w-[20%] h-[8vh] rounded-md shadow-md bg-gradient-to-br to-rose-400 from-sky-400 text-white flex justify-center items-center transition-all ease-in-out duration-500 hover:scale-105"
+              onClick={() => handleSearch()}
+            >
+              {searchLoading === true ? (
+                <ImSpinner8 className="text-[2rem] animate-spin" />
+              ) : (
+                <MdOutlinePersonSearch className="text-[2rem]" />
+              )}
             </button>
           </div>
-          {false &&
+          {/* Skeleton For Loading Or Searching! */}
+          {loadingConversation &&
             [0, 1, 2, 3, 4].map((item) => (
               <div
-                className="w-[95%] h-[12vh] flex justify-around items-center bg-purple-500 animate-pulse mb-2 hover:cursor-pointer transition-all ease-in-out hover:scale-105"
+                className="w-[95%] h-[12vh] flex justify-around items-center bg-transparent animate-pulse mb-2 hover:cursor-pointer transition-all ease-in-out hover:scale-105"
                 key={item}
               >
-                <div className="w-[17%] h-[8vh] lg:w-[18%] lg:h-[7.5vh] rounded-[50%] bg-yellow-400 shadow-md"></div>
-                <div className="w-[75%] h-[11vh] flex flex-col justify-start items-start p-2 bg-green-500">
-                  <div className="text-[1.05rem] font-semibold"> Username </div>
-                  <div className="text-[0.95rem]">Latest Message</div>
+                <div className="w-[17%] h-[8vh] lg:w-[18%] lg:h-[7.5vh] rounded-[50%] bg-slate-400 shadow-md animate-pulse"></div>
+                <div className="w-[75%] h-[11vh] flex flex-col justify-start items-start p-2 bg-transparent animate-pulse">
+                  <div className="text-[1.05rem] font-semibold animate-pulse">
+                    {" "}
+                    Username{" "}
+                  </div>
+                  <div className="text-[0.95rem] animate-pulse">
+                    Latest Message
+                  </div>
                 </div>
               </div>
             ))}
-          <Conversation />
-          <Conversation />
-          <Conversation />
+          {!loadingConversation &&
+            conversation.map((item) => (
+              <Conversation key={item._id} convo={item} />
+            ))}
         </div>
         {/* Container-2 */}
-
         {/* Not Selected Any Conversation! */}
-        {/* <div className="w-[95%] h-[140vh] lg:w-[70%] lg:h-[140vh] bg-orange-600 flex flex-col justify-center items-center">
-          <div className="mb-2 mt-2 flex justify-center items-center">
-            <GiConversation className="text-[9rem]" />
+        {!selectedConversation._id && (
+          <div className="w-[95%] h-[60vh] lg:w-[70%] lg:h-[60vh] bg-transparent flex flex-col justify-center items-center">
+            <div className="mb-2 mt-2 flex justify-center items-center">
+              <GiConversation className="text-[10rem] animate-pulse" />
+            </div>
+            <div className="mt-2 mb-2 text-[1.25rem] lg:text-[1.45rem] text-center">
+              Select a conversation to start messaging
+            </div>
           </div>
-          <div className="mt-2 mb-2 text-[1.25rem] text-center">
-            Select a conversation to start messaging
-          </div>
-        </div> */}
-
+        )}
         {/* Conversation Is Selected! */}
-        <MessageContainer />
+        {selectedConversation._id && <MessageContainer />}
       </div>
     </div>
   );

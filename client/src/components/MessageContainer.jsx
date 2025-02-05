@@ -1,7 +1,39 @@
 import Message from "./Message";
 import MessageInput from "./MessageInput";
+import { useState, useEffect } from "react";
+import { useSelector } from "react-redux";
+import axios from "axios";
+import { useSnackbar } from "notistack";
 /* eslint-disable no-constant-binary-expression */
 export const MessageContainer = () => {
+  const { enqueueSnackbar } = useSnackbar();
+  const conversation = useSelector(
+    (state) => state.conversation.selectedConversations
+  );
+  const currentUser = useSelector((state) => state.user.userInfo);
+  const [loading, setLoading] = useState(true);
+  const [messages, setMessages] = useState([]);
+  useEffect(() => {
+    const getMessages = async () => {
+      setLoading(true);
+      setMessages([]);
+      try {
+        if (conversation.mock) return;
+        const response = await axios.get(
+          `http://localhost:5555/api/v1/messages/${conversation.userId}`,
+          { withCredentials: true }
+        );
+        setMessages(response.data.messages);
+        setLoading(false);
+      } catch (error) {
+        let message =
+          "Failed Retrieving Messages!" || error?.response?.data?.message;
+        enqueueSnackbar(message, { variant: "error" });
+        setLoading(false);
+      }
+    };
+    getMessages();
+  }, [conversation, enqueueSnackbar]);
   return (
     <div className="w-[95%] h-[140vh] lg:w-[70%] bg-transparent flex flex-col justify-start items-center mt-2 mb-2 rounded-lg">
       <div className="text-[1.35rem] font-semibold mb-2 mt-2">
@@ -9,13 +41,25 @@ export const MessageContainer = () => {
       </div>
       <div className="w-[95%] h-[135vh] rounded-md mb-4 flex flex-col justify-start items-center bg-transparent">
         <div className="w-full h-[10vh] bg-transparent rounded-tr-md rounded-tl-md flex justify-start items-center p-2 border-b-2 border-slate-300 mb-[2rem]">
-          <div className="w-[18%] lg:w-[7%] h-[8vh] rounded-[50%] bg-yellow-400 mr-2 shadow-md"></div>
-          <div className="text-[1.15rem] font-semibold">Username</div>
+          <div
+            className="w-[18%] lg:w-[7%] h-[8vh] rounded-[50%] mr-2 shadow-md"
+            style={{
+              backgroundImage: `url(${
+                conversation.userProfilePic || "/Images/avatar.png"
+              })`,
+              backgroundPosition: "center",
+              backgroundRepeat: "no-repeat",
+              backgroundSize: "cover",
+            }}
+          ></div>
+          <div className="text-[1.15rem] font-semibold">
+            {conversation.username}
+          </div>
         </div>
         <div className="w-[95%] h-[95vh] bg-transparent overflow-y-auto overflow-x-hidden flex flex-col justify-start items-center p-2">
           {/* Initial Loading!   */}
-          {false &&
-            [0, 1, 2, 3, 4].map((item) => (
+          {loading &&
+            [0, 1, 2].map((item) => (
               <div
                 key={item}
                 className={`w-full bg-transparent flex flex-row items-center mb-2 p-2 ${
@@ -25,7 +69,7 @@ export const MessageContainer = () => {
                 {item % 2 === 0 ? (
                   <>
                     <div className="w-[34%] lg:w-[11.5%] h-[12vh] rounded-[50%] bg-sky-700 shadow-md mr-4 animate-pulse"></div>
-                    <div className="w-[60%] lg:w-[80%] flex flex-col justify-start items-start p-2 bg-sky-400 text-white rounded-md">
+                    <div className="w-[60%] lg:w-[80%] flex flex-col justify-start items-start p-2 bg-sky-400 text-white rounded-md animate-pulse">
                       <div className="text-[1rem] font-semibold mb-2 animate-pulse">
                         username
                       </div>
@@ -53,11 +97,17 @@ export const MessageContainer = () => {
               </div>
             ))}
           {/* Own Message!   */}
-          <Message ownMessage={true} />
-          <Message ownMessage={false} />
+          {!loading &&
+            messages.map((message) => (
+              <Message
+                ownMessage={message.senderId === currentUser._id}
+                key={message._id}
+                message={message}
+              />
+            ))}
         </div>
         {/* Message Input: */}
-        <MessageInput />
+        <MessageInput setMessages={setMessages} />
       </div>
     </div>
   );
