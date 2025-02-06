@@ -87,7 +87,7 @@ const UserPost = ({ post: initialPost, setFeedPost }) => {
       {currentPost.img && currentPost.img.trim().length > 0 ? (
         <div className="w-full lg:h-[120vh] lg:flex lg:flex-col lg:justify-center lg:items-center lg:rounded-md mb-[2rem] lg:shadow-md lg:bg-slate-100 lg:text-gray-900">
           <div
-            className="w-[100%] h-[65vh] lg:w-[85%] lg:h-[80vh] shadow-md rounded-md mb-[1rem] lg:mb-4 hover:cursor-pointer"
+            className="w-full h-[65vh] lg:w-[85%] lg:h-[80vh] shadow-md rounded-md mb-[1rem] lg:mb-4 hover:cursor-pointer"
             onClick={() =>
               navigate(
                 `/${currentPost.postedBy.username}/post/${currentPost._id}`

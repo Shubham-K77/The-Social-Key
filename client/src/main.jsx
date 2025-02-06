@@ -6,6 +6,7 @@ import { Provider } from "react-redux";
 import store from "../slices/store";
 import { SnackbarProvider } from "notistack";
 import { BrowserRouter } from "react-router-dom";
+import { SocketContextProvider } from "../context/SocketContext.jsx";
 
 createRoot(document.getElementById("root")).render(
   //StrictMode renders every component twice! On Development Mode!
@@ -13,7 +14,9 @@ createRoot(document.getElementById("root")).render(
     <Provider store={store}>
       <BrowserRouter>
         <SnackbarProvider>
-          <App />
+          <SocketContextProvider>
+            <App />
+          </SocketContextProvider>
         </SnackbarProvider>
       </BrowserRouter>
     </Provider>

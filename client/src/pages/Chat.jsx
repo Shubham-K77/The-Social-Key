@@ -13,6 +13,7 @@ import { MessageContainer } from "../components/MessageContainer";
 import { setConversations } from "../../slices/conversations";
 import { ImSpinner8 } from "react-icons/im";
 import { setSelectedConversations } from "../../slices/conversations";
+import { useSocket } from "../../context/SocketContext";
 const Chat = () => {
   const currentTheme = useSelector((state) => state.themeToggler.theme);
   const currentUser = useSelector((state) => state.user.userInfo);
@@ -26,6 +27,7 @@ const Chat = () => {
   const [search, setSearch] = useState("");
   const [loadingConversation, setLoadingConversation] = useState(true);
   const [searchLoading, setSearchLoading] = useState(false);
+  const { socket, onlineUsers } = useSocket();
   //Retrieve User For Every Render!
   useEffect(() => {
     const retrieveUser = async () => {
@@ -183,7 +185,11 @@ const Chat = () => {
             ))}
           {!loadingConversation &&
             conversation.map((item) => (
-              <Conversation key={item._id} convo={item} />
+              <Conversation
+                key={item._id}
+                convo={item}
+                isOnline={onlineUsers.includes(item.participants[0]._id)}
+              />
             ))}
         </div>
         {/* Container-2 */}

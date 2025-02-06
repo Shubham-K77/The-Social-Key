@@ -6,8 +6,8 @@ import cors from "cors";
 import router from "./routes/index.js";
 import { notFound, errorHandle } from "./middleware/errorMw.js";
 import cookie from "cookie-parser";
+import { app, server } from "./sockets/socket.js";
 //CONSTANTS:
-const app = express();
 dotenv.config();
 const port = process.env.PORT;
 const dbUrl = process.env.mongoDbUrl;
@@ -29,7 +29,7 @@ mongoose
   .connect(dbUrl)
   .then(() => {
     console.log("Connected To DataBase!");
-    app.listen(port, () => {
+    server.listen(port, () => {
       console.log(`App Is Running On Port: ${port}`);
       console.log(`URL => http://localhost:${port}`);
     });

@@ -13,7 +13,7 @@ const Comment = ({ reply }) => {
           backgroundSize: "cover",
         }}
       ></div>
-      <div className="w-[85%] h-[24vh] lg:h-[18vh] flex flex-col justify-evenly items-start bg-transparent ml-2">
+      <div className="w-[85%] h-[24vh] lg:h-[18vh] flex flex-col justify-center items-start bg-transparent ml-2">
         <div className="h-[4vh] flex justify-around items-center">
           <div className="text-[1rem] font-roboto font-bold mr-4">
             {reply.username}

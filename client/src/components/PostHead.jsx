@@ -15,7 +15,7 @@ const PostHead = ({ username, pid, pp, days }) => {
     <div className="w-full lg:w-[95%] h-[30vh] flex justify-evenly lg:justify-around bg-transparent mb-2">
       <div className="flex justify-evenly lg:justify-around items-center w-[70%] lg:w-[50%] bg-transparent p-2">
         <div
-          className="w-[58%] h-[11.5vh] lg:w-[35%] lg:h-[15vh] rounded-[50%] shadow-md mr-2 hover:cursor-pointer"
+          className="w-[78%] h-[10.5vh] lg:w-[35%] lg:h-[15vh] rounded-[50%] shadow-md mr-2 hover:cursor-pointer"
           style={{
             backgroundImage: `url('${pp || "/Images/avatar.png"}')`,
             backgroundSize: "cover",
@@ -31,7 +31,7 @@ const PostHead = ({ username, pid, pp, days }) => {
           {username}
         </div>
       </div>
-      <div className="w-[45%] lg:w-[25%] flex justify-evenly lg:justify-around items-center">
+      <div className="w-[25%] lg:w-[25%] flex justify-evenly lg:justify-around items-center">
         <div className="text-[0.75rem] lg:text-[0.85rem] font-semibold mr-2 w-full">
           {formatDistanceToNow(new Date(days))} ago
         </div>

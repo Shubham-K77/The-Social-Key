@@ -1,7 +1,7 @@
 /* eslint-disable react/prop-types */
 import { useSelector, useDispatch } from "react-redux";
 import { setSelectedConversations } from "../../slices/conversations";
-const Conversation = ({ convo }) => {
+const Conversation = ({ convo, isOnline }) => {
   const currentTheme = useSelector((state) => state.themeToggler.theme);
   const currentUser = useSelector((state) => state.user.userInfo);
   const selectedConversation = useSelector(
@@ -43,7 +43,13 @@ const Conversation = ({ convo }) => {
         }}
       ></div>
       <div className="w-[75%] h-[11vh] flex flex-col justify-start items-start p-2 bg-transparent">
-        <div className="text-[1.05rem] font-semibold"> {user.username} </div>
+        <div className="text-[1.05rem] font-semibold">
+          {user.username}{" "}
+          <span className="ml-2 text-green-400 text-[0.85rem] font-bold">
+            {" "}
+            {isOnline && "online"}{" "}
+          </span>
+        </div>
         <div className="text-[0.95rem]">
           {currentUser._id === message.sender ? "✔️ " : ""}
           {message.text.length > 18
