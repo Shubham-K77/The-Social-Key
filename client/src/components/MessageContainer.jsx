@@ -1,9 +1,11 @@
 import Message from "./Message";
 import MessageInput from "./MessageInput";
-import { useState, useEffect } from "react";
-import { useSelector } from "react-redux";
+import { useState, useEffect, useRef } from "react";
+import { useSelector, useDispatch } from "react-redux";
 import axios from "axios";
 import { useSnackbar } from "notistack";
+import { useSocket } from "../../context/SocketContext";
+import { setConversations } from "../../slices/conversations";
 /* eslint-disable no-constant-binary-expression */
 export const MessageContainer = () => {
   const { enqueueSnackbar } = useSnackbar();
@@ -13,6 +15,47 @@ export const MessageContainer = () => {
   const currentUser = useSelector((state) => state.user.userInfo);
   const [loading, setLoading] = useState(true);
   const [messages, setMessages] = useState([]);
+  const { socket } = useSocket();
+  const dispatch = useDispatch();
+  const messageEndRef = useRef(null);
+
+  //Get The Socket Events For Message And Update!
+  useEffect(() => {
+    if (!socket) return;
+    const handleNewMessage = (message) => {
+      if (conversation._id === message.conversationId) {
+        setMessages((prevMessage) => [...prevMessage, message]);
+      }
+      dispatch(
+        setConversations((prev) => {
+          const updatedConversation = prev.map((conv) => {
+            if (conv._id === message.conversationId) {
+              return {
+                ...conv,
+                lastMessage: {
+                  text: message.text,
+                  sender: message.sender,
+                },
+              };
+            }
+            return conv;
+          });
+          return updatedConversation;
+        })
+      );
+    };
+    socket.on("newMessage", handleNewMessage);
+    return () => {
+      socket.off("newMessage", handleNewMessage);
+    };
+  }, [conversation._id, dispatch, socket]);
+
+  //For Every Changes In Messages:
+  useEffect(() => {
+    messageEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages]);
+
+  // Get Messages On Every Reloads!
   useEffect(() => {
     const getMessages = async () => {
       setLoading(true);
@@ -34,6 +77,7 @@ export const MessageContainer = () => {
     };
     getMessages();
   }, [conversation, enqueueSnackbar]);
+
   return (
     <div className="w-[95%] h-[140vh] lg:w-[70%] bg-transparent flex flex-col justify-start items-center mt-2 mb-2 rounded-lg">
       <div className="text-[1.35rem] font-semibold mb-2 mt-2">
@@ -98,13 +142,17 @@ export const MessageContainer = () => {
             ))}
           {/* Own Message!   */}
           {!loading &&
-            messages.map((message) => (
-              <Message
-                ownMessage={message.senderId === currentUser._id}
-                key={message._id}
-                message={message}
-              />
-            ))}
+            messages.map((message, index) => {
+              const isLastMessage = index === messages.length - 1;
+              return (
+                <Message
+                  key={message._id}
+                  ref={isLastMessage ? messageEndRef : null}
+                  ownMessage={message.senderId === currentUser._id}
+                  message={message}
+                />
+              );
+            })}
         </div>
         {/* Message Input: */}
         <MessageInput setMessages={setMessages} />

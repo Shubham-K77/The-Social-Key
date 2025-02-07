@@ -2,6 +2,7 @@ import express from "express";
 import conversationModel from "../conversation/conversation.model.js";
 import messageModel from "../message/message.model.js";
 import tokenCheck from "../../middleware/tokenCheck.js";
+import { getRecipientSocketId } from "../../sockets/socket.js";
 const messageRouter = express.Router();
 //Get Your Messages:
 messageRouter.get("/conversations", tokenCheck, async (req, res, next) => {
@@ -119,6 +120,11 @@ messageRouter.post("/", tokenCheck, async (req, res, next) => {
       const error = new Error("Couldn't Create A New Message!");
       res.status(500);
       return next(error);
+    }
+    //Send The Message Immediately To Socket Server No Need To Fetch!
+    const recieverSocketId = getRecipientSocketId(recepientId);
+    if (recieverSocketId) {
+      io.to(recieverSocketId).emit("newMessage", newMessage);
     }
     //Successfully Updated!
     res.status(200).send({ message: "New Message Created!", newMessage });
