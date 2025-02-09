@@ -28,7 +28,27 @@ const Chat = () => {
   const [loadingConversation, setLoadingConversation] = useState(true);
   const [searchLoading, setSearchLoading] = useState(false);
   const { socket, onlineUsers } = useSocket();
-  //Retrieve User For Every Render!
+  //Listen For Socket Events:
+  useEffect(() => {
+    socket?.on("messagesSeen", ({ conversationId }) => {
+      setConversations((prev) => {
+        const updatedConversations = prev.map((conversation) => {
+          if (conversation._id === conversationId) {
+            return {
+              ...conversation,
+              lastMessage: {
+                ...conversation.lastMessage,
+                seen: true,
+              },
+            };
+          }
+          return conversation;
+        });
+        return updatedConversations;
+      });
+    });
+  }, [socket]);
+  //Retrieve User For Every Render:
   useEffect(() => {
     const retrieveUser = async () => {
       if (!currentUser || Object.keys(currentUser).length === 0) {
@@ -53,7 +73,6 @@ const Chat = () => {
     };
     retrieveUser();
   }, [currentUser, dispatch, enqueueSnackbar, navigate]);
-
   //Retrieve The Conversations:
   useEffect(() => {
     const fetchConversation = async () => {
@@ -83,6 +102,7 @@ const Chat = () => {
         `http://localhost:5555/api/v1/users/profile/${search}`
       );
       const searchedUser = response.data.userExists;
+      console.log("Searched User:", searchedUser); // Log the searched user data
       const messagingYourself = searchedUser._id === currentUser._id;
       if (messagingYourself) {
         setSearchLoading(false);
@@ -90,9 +110,14 @@ const Chat = () => {
           variant: "info",
         });
       }
-      const conversationAlreadyExists = conversation.find(
-        (conversation) => conversation.participants[0]._id === searchedUser._id
-      );
+      // Log the conversation array and check if it's empty
+      console.log("Current Conversation:", conversation);
+      const conversationAlreadyExists =
+        conversation.length > 0 &&
+        conversation.find(
+          (conv) => conv.participants[0]._id === searchedUser._id
+        );
+      console.log("Conversation Already Exists:", conversationAlreadyExists);
       if (conversationAlreadyExists) {
         dispatch(
           setSelectedConversations({
@@ -100,18 +125,18 @@ const Chat = () => {
             userId: searchedUser._id,
             username: searchedUser.username,
             userProfilePic: searchedUser.profilePic,
+            mock: false,
           })
         );
         enqueueSnackbar("Messages Found!", { variant: "success" });
-        return setSearchLoading(false);
+        setSearchLoading(false);
+        return;
       }
+      // Create a mock conversation if no real conversation exists
       const mockConversation = {
         mock: true,
-        lastMessage: {
-          text: "",
-          sender: {},
-        },
-        _id: Date.now(),
+        lastMessage: { text: "", sender: {} },
+        _id: Date.now().toString(),
         participants: [
           {
             _id: searchedUser._id,
@@ -120,11 +145,25 @@ const Chat = () => {
           },
         ],
       };
-      setConversations((prevConvos) => [...prevConvos, mockConversation]);
+
+      console.log("Creating Mock Conversation:", mockConversation); // Log the mock conversation
+      dispatch(
+        setConversations((prevConvos) => [...prevConvos, mockConversation])
+      );
+      dispatch(
+        setSelectedConversations({
+          _id: mockConversation._id,
+          userId: searchedUser._id,
+          username: searchedUser.username,
+          userProfilePic: searchedUser.profilePic,
+          mock: true,
+        })
+      );
       setSearchLoading(false);
     } catch (error) {
-      let message =
-        "Unable To Search For User!" || error.response?.data?.message;
+      const message =
+        error.response?.data?.message || "Unable To Search For User!";
+      console.error("Error in Search:", error); // Log the full error to help debug
       enqueueSnackbar(message, { variant: "error" });
       setSearchLoading(false);
     }

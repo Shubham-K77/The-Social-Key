@@ -91,6 +91,29 @@ const UpdateProfile = () => {
     }
   };
 
+  const freezeAccount = async () => {
+    if (!window.confirm("Do You Want To Freeze Your Account?")) return;
+    try {
+      const response = await axios.put(
+        "http://localhost:5555/api/v1/users/freeze",
+        {},
+        { withCredentials: true }
+      );
+      const successMessage = response.data.message;
+      const logout = await axios.post(
+        "http://localhost:5555/api/v1/users/logout",
+        {},
+        { withCredentials: true }
+      );
+      enqueueSnackbar(logout.data.message, { variant: "success" });
+      enqueueSnackbar(successMessage, { variant: "success" });
+      navigate("/");
+    } catch (error) {
+      let message = error.response?.data?.message || "Internal Server Error!";
+      enqueueSnackbar(message, { variant: "error" });
+    }
+  };
+
   return (
     <div
       className={`w-full min-h-screen flex flex-col justify-start items-center ${
@@ -100,7 +123,7 @@ const UpdateProfile = () => {
       }`}
     >
       <Navbar />
-      <div className="mt-2 w-[90%] h-[155vh] mb-2 bg-transparent flex justify-center items-center">
+      <div className="mt-2 w-[90%] h-[185vh] lg:h-[170vh] mb-2 bg-transparent flex justify-center items-center">
         <div className="w-[95%] lg:w-[40%] h-[150vh] bg-transparent rounded-md flex flex-col justify-start items-center">
           <div className="mt-2 mb-[1rem] text-[1.75rem] font-bold">
             User Profile Edit
@@ -121,7 +144,7 @@ const UpdateProfile = () => {
               ></div>
             </div>
             <div
-              className="w-[55%] h-[8vh] font-bold flex flex-row justify-center items-center mb-2 hover:cursor-pointer text-[1rem] lg:text-[1.2rem] bg-teal-600 text-white hover:bg-teal-700 rounded-md"
+              className="w-[55%] h-[8vh] font-bold flex flex-row justify-center items-center mb-2 hover:cursor-pointer text-[1rem] lg:text-[1.2rem] bg-teal-600 text-white hover:bg-teal-700 rounded-md transition-all ease-in-out duration-200 hover:scale-105"
               onClick={() => fileRef.current.click()}
             >
               Change
@@ -134,7 +157,7 @@ const UpdateProfile = () => {
               />
             </div>
           </div>
-          <div className="w-[95%] h-[95vh] bg-transparent mb-[1rem] flex flex-col justify-start items-start">
+          <div className="w-[95%] h-[115vh] bg-transparent mb-[1rem] flex flex-col justify-start items-start">
             <div className="ml-2 font-bold text-[1.15rem] mb-2">Fullname</div>
             <div className="w-[90%] mb-[1rem] ml-[1rem]">
               <input
@@ -181,8 +204,18 @@ const UpdateProfile = () => {
                 onChange={(e) => setUser({ ...user, bio: e.target.value })}
               />
             </div>
+            <div className="w-full flex justify-center items-center text-[1.05rem] mb-2 font-semibold">
+              You can unfreeze your account anytime by logging in.
+            </div>
+            <div
+              className="w-[95%] h-[12vh] lg:h-[10vh] bg-red-500 mt-2 mb-4 lg:mb-[2rem] rounded-md shadow-md flex justify-center items-center text-white text-[1.15rem] font-semibold hover:cursor-pointer hover:bg-red-600 transition-all ease-in-out duration-200 hover:scale-105"
+              onClick={() => freezeAccount()}
+            >
+              Freeze Your Account
+            </div>
           </div>
-          <div className="w-[95%] h-[10vh] bg-transparent flex flex-row justify-around items-center">
+          {/* Buttons */}
+          <div className="w-[95%] h-[10vh] bg-transparent flex flex-row justify-around items-center mb-4">
             <div
               className="w-[50%] lg:w-[40%] h-[8vh] bg-rose-400 rounded-md font-bold text-[1.05rem] flex justify-center items-center text-black hover:cursor-pointer hover:bg-rose-500 mr-3 lg:mr-0"
               onClick={() => navigate("/update")}

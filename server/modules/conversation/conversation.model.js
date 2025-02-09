@@ -15,6 +15,10 @@ const conversationSchema = mongoose.Schema(
         ref: "User",
         required: [true, "The Sender Must Be Specified!"],
       },
+      seen: {
+        type: Boolean,
+        default: false,
+      },
     },
   },
   { timestamps: true }

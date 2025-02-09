@@ -47,6 +47,16 @@ const UserProfile = () => {
         const profileResponse = await axios.get(
           `http://localhost:5555/api/v1/users/profile/${username}`
         );
+        if (
+          !profileResponse.data.userExists ||
+          profileResponse.data.userExists.isFrozen
+        ) {
+          setUserExist(false);
+          setPostInfo([]);
+          return enqueueSnackbar("This Account Has Been Frozen!", {
+            variant: "error",
+          });
+        }
         if (profileResponse.data.userExists) {
           setUserProfileData(profileResponse.data.userExists);
           setUserExist(true);

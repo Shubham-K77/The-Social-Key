@@ -1,6 +1,7 @@
 /* eslint-disable react/prop-types */
 import { useSelector, useDispatch } from "react-redux";
 import { setSelectedConversations } from "../../slices/conversations";
+import { IoCheckmarkDoneOutline } from "react-icons/io5";
 const Conversation = ({ convo, isOnline }) => {
   const currentTheme = useSelector((state) => state.themeToggler.theme);
   const currentUser = useSelector((state) => state.user.userInfo);
@@ -50,8 +51,20 @@ const Conversation = ({ convo, isOnline }) => {
             {isOnline && "online"}{" "}
           </span>
         </div>
-        <div className="text-[0.95rem]">
-          {currentUser._id === message.sender ? "✔️ " : ""}
+        <div className="text-[0.95rem] flex justify-evenly">
+          {currentUser._id === message.sender ? (
+            message.seen ? (
+              <IoCheckmarkDoneOutline
+                className={"text-[1.2rem] font-bold mr-2 text-yellow-600"}
+              />
+            ) : (
+              <IoCheckmarkDoneOutline
+                className={"text-[1.2rem] font-bold mr-2"}
+              />
+            )
+          ) : (
+            ""
+          )}
           {message.text.length > 18
             ? message.text.substring(0, 18) + "..."
             : message.text}

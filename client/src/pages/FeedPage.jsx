@@ -19,6 +19,7 @@ import { RxAvatar } from "react-icons/rx";
 import { RiAiGenerate2 } from "react-icons/ri";
 import { MdDashboard } from "react-icons/md";
 import UserPost from "../components/UserPost";
+import SuggestedUsers from "../components/SuggestedUsers";
 const FeedPage = () => {
   const theme = useSelector((state) => state.themeToggler.theme);
   const userInfo = useSelector((state) => state.user.userInfo);
@@ -185,6 +186,7 @@ const FeedPage = () => {
       }`}
     >
       <Navbar />
+      {/* Buttons */}
       <div className="w-[98%] lg:w-[95%] h-[15vh] bg-transparent mb-[2rem] mt-2 flex justify-evenly lg:justify-center items-center">
         <div
           className={`lg:ml-[3rem] w-[25%] h-[8vh] lg:w-[8%] lg:h-[8vh] rounded-md shadow-md text-[1.05rem] font-bold flex justify-center items-center mr-4 ml-3 ${
@@ -227,6 +229,11 @@ const FeedPage = () => {
           <LuLogOut className="text-[2rem]" />
         </div>
       </div>
+      {/* Suggested Users */}
+      <div className="w-[90%] lg:w-[30%] bg-transparent mb-2">
+        <SuggestedUsers />
+      </div>
+      {/* Create The Post */}
       {createPost === true ? (
         <div
           className={`w-[95%] bg-transparent flex justify-center items-center ${

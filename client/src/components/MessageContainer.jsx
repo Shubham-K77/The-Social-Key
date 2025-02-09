@@ -19,12 +19,15 @@ export const MessageContainer = () => {
   const dispatch = useDispatch();
   const messageEndRef = useRef(null);
 
-  //Get The Socket Events For Message And Update!
   useEffect(() => {
     if (!socket) return;
     const handleNewMessage = (message) => {
       if (conversation._id === message.conversationId) {
-        setMessages((prevMessage) => [...prevMessage, message]);
+        setMessages((prevMessages) => [...prevMessages, message]);
+      }
+      if (!document.hasFocus()) {
+        const sound = new Audio("/Audios/notify.ogg");
+        sound.play();
       }
       dispatch(
         setConversations((prev) => {
@@ -50,7 +53,41 @@ export const MessageContainer = () => {
     };
   }, [conversation._id, dispatch, socket]);
 
-  //For Every Changes In Messages:
+  //Handling Seen And Useen Messages:
+  useEffect(() => {
+    const lastMessageIsFromOtherUser =
+      messages.length &&
+      messages[messages.length - 1].sender !== currentUser._id;
+    if (lastMessageIsFromOtherUser) {
+      socket.emit("markMessagesAsSeen", {
+        conversationId: conversation._id,
+        userId: conversation.userId,
+      });
+    }
+    socket.on("messagesSeen", ({ conversationId }) => {
+      if (conversation._id === conversationId) {
+        setMessages((prev) => {
+          const updatedMessages = prev.map((message) => {
+            if (!message.seen) {
+              return {
+                ...message,
+                seen: true,
+              };
+            }
+            return message;
+          });
+          return updatedMessages;
+        });
+      }
+    });
+  }, [
+    conversation._id,
+    conversation.userId,
+    currentUser._id,
+    messages,
+    socket,
+  ]);
+
   useEffect(() => {
     messageEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
@@ -61,7 +98,7 @@ export const MessageContainer = () => {
       setLoading(true);
       setMessages([]);
       try {
-        if (conversation.mock) return;
+        if (conversation.mock) return setLoading(false);
         const response = await axios.get(
           `http://localhost:5555/api/v1/messages/${conversation.userId}`,
           { withCredentials: true }

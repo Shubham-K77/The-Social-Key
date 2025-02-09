@@ -15,7 +15,7 @@ const PostHead = ({ username, pid, pp, days }) => {
     <div className="w-full lg:w-[95%] h-[30vh] flex justify-evenly lg:justify-around bg-transparent mb-2">
       <div className="flex justify-evenly lg:justify-around items-center w-[70%] lg:w-[50%] bg-transparent p-2">
         <div
-          className="w-[78%] h-[10.5vh] lg:w-[35%] lg:h-[15vh] rounded-[50%] shadow-md mr-2 hover:cursor-pointer"
+          className="w-[37.5%] h-[10.5vh] lg:w-[35%] lg:h-[15vh] rounded-[50%] shadow-md mr-2 hover:cursor-pointer"
           style={{
             backgroundImage: `url('${pp || "/Images/avatar.png"}')`,
             backgroundSize: "cover",

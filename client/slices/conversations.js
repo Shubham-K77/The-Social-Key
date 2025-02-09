@@ -15,10 +15,10 @@ const conversationSlice = createSlice({
   initialState,
   reducers: {
     setConversations: (state, action) => {
-      return { ...state, conversations: [...action.payload] };
+      state.conversations = Array.isArray(action.payload) ? action.payload : [];
     },
     setSelectedConversations: (state, action) => {
-      return { ...state, selectedConversations: { ...action.payload } };
+      state.selectedConversations = { ...action.payload };
     },
   },
 });

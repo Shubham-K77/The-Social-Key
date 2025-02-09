@@ -1,5 +1,6 @@
 /* eslint-disable react/prop-types */
 import { useSelector } from "react-redux";
+import { IoCheckmarkDoneOutline } from "react-icons/io5";
 const Message = ({ ownMessage, message }) => {
   const conversation = useSelector(
     (state) => state.conversation.selectedConversations
@@ -19,6 +20,19 @@ const Message = ({ ownMessage, message }) => {
             </div>
             <div className="text-[0.95rem] lg:text-[0.85rem] text-right">
               {message.text}
+            </div>
+            <div className="text-[0.95rem] w-full flex justify-end items-center font-bold">
+              {message.seen ? (
+                <>
+                  <IoCheckmarkDoneOutline className={"text-yellow-400"} />
+                  <div className="ml-2 text-yellow-400"> seen </div>
+                </>
+              ) : (
+                <>
+                  <IoCheckmarkDoneOutline className={"text-white"} />
+                  <div className="ml-2 text-white"> unseen </div>
+                </>
+              )}
             </div>
           </div>
           <div

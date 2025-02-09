@@ -12,8 +12,12 @@ const messageSchema = mongoose.Schema(
       required: [true, "Sender Id Must Be Specified!"],
     },
     text: {
-      type: "String",
+      type: String,
       required: [true, "Text For Message Is Required!"],
+    },
+    seen: {
+      type: Boolean,
+      default: false,
     },
   },
   { timestamps: true }

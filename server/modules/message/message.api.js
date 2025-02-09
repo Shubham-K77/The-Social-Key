@@ -3,8 +3,9 @@ import conversationModel from "../conversation/conversation.model.js";
 import messageModel from "../message/message.model.js";
 import tokenCheck from "../../middleware/tokenCheck.js";
 import { getRecipientSocketId } from "../../sockets/socket.js";
+import { io } from "../../sockets/socket.js"; // Import `io`
 const messageRouter = express.Router();
-//Get Your Messages:
+// Get Your Messages
 messageRouter.get("/conversations", tokenCheck, async (req, res, next) => {
   try {
     const currentUser = req.userInfo;
@@ -22,7 +23,6 @@ messageRouter.get("/conversations", tokenCheck, async (req, res, next) => {
       res.status(404);
       return next(error);
     }
-    //Send The Data For Other Users Only!
     conversation.forEach((conversation) => {
       conversation.participants = conversation.participants.filter(
         (participant) =>
@@ -36,18 +36,18 @@ messageRouter.get("/conversations", tokenCheck, async (req, res, next) => {
     next(error);
   }
 });
-//Get Messages With Other People:
+
+// Get Messages With Other People
 messageRouter.get("/:otherUserId", tokenCheck, async (req, res, next) => {
   try {
     const { otherUserId } = req.params;
     const currentUserId = req.userInfo._id;
-    //If User Is Trying To Find Conversation To Himself:
+    // If User Is Trying To Find Conversation To Himself:
     if (otherUserId === currentUserId) {
       const error = new Error("You Can't See Messages With Yourself!");
       res.status(404);
       return next(error);
     }
-    //Find Conversation:
     const conversation = await conversationModel.findOne({
       participants: { $all: [currentUserId, otherUserId] },
     });
@@ -73,18 +73,17 @@ messageRouter.get("/:otherUserId", tokenCheck, async (req, res, next) => {
     next(error);
   }
 });
-//Send Message:
+
+// Send Message
 messageRouter.post("/", tokenCheck, async (req, res, next) => {
   try {
     const { recepientId, message } = req.body;
     const senderId = req.userInfo._id;
-    //Finding Conversation:
     let conversation = await conversationModel.findOne({
       participants: {
         $all: [senderId, recepientId],
       },
     });
-    //New Conversation:
     if (!conversation) {
       conversation = await conversationModel.create({
         participants: [senderId, recepientId],
@@ -94,13 +93,11 @@ messageRouter.post("/", tokenCheck, async (req, res, next) => {
         },
       });
     }
-    //Create New Message:
     const newMessage = await messageModel.create({
       conversationId: conversation._id,
       senderId,
       text: message,
     });
-    //Update The Conversation:
     const updatedConversation = await conversationModel.findOneAndUpdate(
       { _id: conversation._id },
       {
@@ -121,12 +118,12 @@ messageRouter.post("/", tokenCheck, async (req, res, next) => {
       res.status(500);
       return next(error);
     }
-    //Send The Message Immediately To Socket Server No Need To Fetch!
     const recieverSocketId = getRecipientSocketId(recepientId);
     if (recieverSocketId) {
       io.to(recieverSocketId).emit("newMessage", newMessage);
+    } else {
+      console.warn("Recipient is not connected.");
     }
-    //Successfully Updated!
     res.status(200).send({ message: "New Message Created!", newMessage });
   } catch (error) {
     error.message = "Internal Server Error!";
@@ -134,4 +131,5 @@ messageRouter.post("/", tokenCheck, async (req, res, next) => {
     next(error);
   }
 });
+
 export default messageRouter;

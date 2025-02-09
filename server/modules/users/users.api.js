@@ -9,6 +9,7 @@ import generateQR from "../../utils/qrCode.js";
 import mail from "../../utils/mailer.js";
 import config from "../../config/cloudinaryConfig.js";
 import { v2 as cloudinary } from "cloudinary";
+import mongoose from "mongoose";
 //CONSTANTS:
 const userRouter = express.Router();
 config();
@@ -103,6 +104,19 @@ userRouter.post("/login", async (req, res, next) => {
       res.status(400);
       return next(error);
     }
+    //Unfreeze Account If Frozen!
+    if (userExists.isFrozen === true) {
+      const updatedFrozen = await userModel.findByIdAndUpdate(
+        userExists._id,
+        { isFrozen: false },
+        { new: true }
+      );
+      if (!updatedFrozen) {
+        const error = new Error("Failed to unfreeze the account!");
+        res.status(500);
+        return next(error);
+      }
+    }
     //Payload For JWT Token
     const payload = {
       _id: userExists._id,
@@ -185,7 +199,63 @@ userRouter.post("/follow/:id", tokenCheck, async (req, res, next) => {
     next(error);
   }
 });
-
+//Get Suggested Users:
+userRouter.get("/suggested", tokenCheck, async (req, res, next) => {
+  try {
+    const ObjectId = mongoose.Types.ObjectId;
+    const currentUserId = req.userInfo._id;
+    const followedByYou = await userModel
+      .findById(currentUserId)
+      .select("following");
+    if (!followedByYou) {
+      const error = new Error("Unable To Find Followers!");
+      res.status(404);
+      return next(error);
+    }
+    const users = await userModel.aggregate([
+      { $match: { _id: { $ne: new ObjectId(currentUserId) } } },
+      { $sample: { size: 3 } },
+    ]);
+    if (!users || users.length === 0) {
+      const error = new Error("No Suggestions Available!");
+      res.status(404);
+      return next(error);
+    }
+    const suggestedUsers = users.filter(
+      (user) => !followedByYou.following.includes(user._id)
+    );
+    suggestedUsers.forEach((users) => (users.password = null));
+    if (!suggestedUsers) {
+      const error = new Error("Error Finding Suggestions!");
+      res.status(500);
+      return next(error);
+    }
+    res.status(200).send({ message: "Found Suggestions!", suggestedUsers });
+  } catch (error) {
+    error.message = "Internal Server Error!";
+    res.status(500);
+    next(error);
+  }
+});
+//Freeze Account:
+userRouter.put("/freeze", tokenCheck, async (req, res, next) => {
+  try {
+    const currentUserId = req.userInfo._id;
+    const userExists = await userModel.findById(currentUserId);
+    if (!userExists) {
+      const error = new Error("Invalid User!");
+      res.status(404);
+      return next(error);
+    }
+    userExists.isFrozen = true;
+    await userExists.save();
+    res.status(200).send({ message: "Account Freezed Successfully!" });
+  } catch (error) {
+    error.message = "Internal Server Failed!";
+    res.status(500);
+    next(error);
+  }
+});
 //Get Id Data:
 userRouter.get("/userInfo/:id", async (req, res, next) => {
   try {
@@ -210,7 +280,6 @@ userRouter.get("/userInfo/:id", async (req, res, next) => {
     next(error);
   }
 });
-
 //Get Profile:
 userRouter.get("/profile/:username", async (req, res, next) => {
   try {
@@ -231,7 +300,6 @@ userRouter.get("/profile/:username", async (req, res, next) => {
     next(error);
   }
 });
-
 //Update Profile:
 userRouter.put("/update", tokenCheck, async (req, res, next) => {
   try {
@@ -322,7 +390,6 @@ userRouter.put("/update", tokenCheck, async (req, res, next) => {
     return next(error);
   }
 });
-
 //OTP Check:
 userRouter.post("/validateOtp", async (req, res, next) => {
   try {
