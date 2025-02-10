@@ -1,5 +1,4 @@
 import mongoose from "mongoose";
-//Create A Schema:
 const paymentSchema = mongoose.Schema(
   {
     userId: {
@@ -15,33 +14,34 @@ const paymentSchema = mongoose.Schema(
     },
     credit: {
       type: Number,
-      required: [true, "Amount Must Be Specified!"],
+      required: [true, "Credit Must Be Specified!"],
       min: 0,
     },
     transactionId: {
       type: String,
       unique: true,
-      sparse: true,
+      required: [true, "Transaction ID Must Be Specified!"],
     },
     paymentMethod: {
       type: String,
       required: [true, "Payment Method Must Be Specified!"],
       enum: ["debit_card", "bank_transfer", "cash", "online"],
-      default: "online", //Khalti
+      default: "online",
     },
     status: {
       type: String,
       required: [true, "Status Must Be Specified"],
-      enum: ["pending", "completed", "failed", "refunded"], // Payment status
+      enum: ["pending", "completed", "failed", "refunded"],
       default: "pending",
     },
     pidx: {
       type: String,
       unique: true,
+      sparse: true,
     },
   },
   { timestamps: true }
 );
-//Export Schema:
+
 const paymentModel = mongoose.model("payment", paymentSchema);
 export default paymentModel;

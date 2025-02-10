@@ -25,10 +25,8 @@ export const MessageContainer = () => {
       if (conversation._id === message.conversationId) {
         setMessages((prevMessages) => [...prevMessages, message]);
       }
-      if (!document.hasFocus()) {
-        const sound = new Audio("/Audios/notify.ogg");
-        sound.play();
-      }
+      const sound = new Audio("/Audios/notify.ogg");
+      sound.play();
       dispatch(
         setConversations((prev) => {
           const updatedConversation = prev.map((conv) => {

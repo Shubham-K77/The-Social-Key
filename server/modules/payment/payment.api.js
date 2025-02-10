@@ -20,12 +20,16 @@ paymentRouter.post("/pay", tokenCheck, async (req, res, next) => {
       return next(error);
     }
     const user = req.userInfo;
+    const tempTransactionId = `TEMP_${Date.now()}_${Math.random()
+      .toString(36)
+      .substr(2, 9)}`;
     const newPayment = await paymentModel.create({
       userId: user._id,
       amount: totalPrice,
       paymentMethod: "online",
       status: "pending",
       credit: credits,
+      transactionId: tempTransactionId,
     });
     if (!newPayment) {
       const error = new Error("Unable To Create The Transaction!");
@@ -70,12 +74,12 @@ paymentRouter.post("/pay", tokenCheck, async (req, res, next) => {
       res.status(500);
       return next(error);
     }
-    //Update The Model With New PIDX:
     const updatePayment = await paymentModel.findByIdAndUpdate(
       { _id: newPayment._id },
       {
         pidx: response.data.pidx,
-      }
+      },
+      { new: true }
     );
     if (!updatePayment) {
       const error = new Error("Unable To Update The Payment Info!");
@@ -95,7 +99,6 @@ paymentRouter.post("/pay", tokenCheck, async (req, res, next) => {
     next(error);
   }
 });
-
 // 2. Confirm The Transaction:
 paymentRouter.post("/confirm/:pidx", tokenCheck, async (req, res, next) => {
   try {
