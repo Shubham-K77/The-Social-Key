@@ -20,7 +20,7 @@ const Icons = ({ post, onPostUpdate }) => {
 
   const qrLoad = async () => {
     try {
-      const currentUrl = `http://localhost:5173/${post.postedBy.username}/post/${post._id}`;
+      const currentUrl = `https://the-social-key.vercel.app/${post.postedBy.username}/post/${post._id}`;
       const response = await axios.post(
         "https://the-social-key-api.vercel.app/api/v1/users/qrCode",
         {

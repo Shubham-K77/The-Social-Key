@@ -7,7 +7,7 @@ const PostHead = ({ username, pid, pp, days }) => {
   const { enqueueSnackbar } = useSnackbar();
   const navigate = useNavigate();
   const copyPostLink = () => {
-    const url = `http://localhost:5173/${username}/post/${pid}`;
+    const url = `https://the-social-key.vercel.app/${username}/post/${pid}`;
     navigator.clipboard.writeText(url);
     enqueueSnackbar("Successfully Copied URL!", { variant: "success" });
   };
