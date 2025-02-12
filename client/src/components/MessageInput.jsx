@@ -15,7 +15,7 @@ const MessageInput = ({ setMessages }) => {
     if (!message) return;
     try {
       const response = await axios.post(
-        "http://localhost:5555/api/v1/messages/",
+        "https://the-social-key-api.vercel.app/api/v1/messages/",
         {
           recepientId: conversation.userId,
           message,

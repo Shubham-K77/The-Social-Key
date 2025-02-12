@@ -98,7 +98,7 @@ export const MessageContainer = () => {
       try {
         if (conversation.mock) return setLoading(false);
         const response = await axios.get(
-          `http://localhost:5555/api/v1/messages/${conversation.userId}`,
+          `https://the-social-key-api.vercel.app/api/v1/messages/${conversation.userId}`,
           { withCredentials: true }
         );
         setMessages(response.data.messages);

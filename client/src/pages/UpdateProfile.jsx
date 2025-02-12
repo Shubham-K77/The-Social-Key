@@ -41,7 +41,7 @@ const UpdateProfile = () => {
       if (!userInfo || Object.keys(userInfo).length === 0) {
         try {
           const response = await axios.get(
-            "http://localhost:5555/api/v1/users/token",
+            "https://the-social-key-api.vercel.app/api/v1/users/token",
             { withCredentials: true }
           );
           if (response.data.userInfo) {
@@ -71,7 +71,7 @@ const UpdateProfile = () => {
     try {
       setLoading(true);
       const response = await axios.put(
-        "http://localhost:5555/api/v1/users/update",
+        "https://the-social-key-api.vercel.app/api/v1/users/update",
         {
           name: user.name,
           username: user.username,
@@ -95,13 +95,13 @@ const UpdateProfile = () => {
     if (!window.confirm("Do You Want To Freeze Your Account?")) return;
     try {
       const response = await axios.put(
-        "http://localhost:5555/api/v1/users/freeze",
+        "https://the-social-key-api.vercel.app/api/v1/users/freeze",
         {},
         { withCredentials: true }
       );
       const successMessage = response.data.message;
       const logout = await axios.post(
-        "http://localhost:5555/api/v1/users/logout",
+        "https://the-social-key-api.vercel.app/api/v1/users/logout",
         {},
         { withCredentials: true }
       );

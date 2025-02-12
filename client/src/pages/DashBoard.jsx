@@ -52,13 +52,13 @@ const DashBoard = () => {
         setIsProcessingPayment(true);
         try {
           const response = await axios.post(
-            `http://localhost:5555/api/v1/payments/confirm/${pidx}`,
+            `https://the-social-key-api.vercel.app/api/v1/payments/confirm/${pidx}`,
             {},
             { withCredentials: true }
           );
           if (response.data.success) {
             const userResponse = await axios.get(
-              "http://localhost:5555/api/v1/users/token",
+              "https://the-social-key-api.vercel.app/api/v1/users/token",
               { withCredentials: true }
             );
             if (userResponse.data.userInfo) {
@@ -87,7 +87,7 @@ const DashBoard = () => {
     const fetchUser = async () => {
       try {
         const response = await axios.get(
-          "http://localhost:5555/api/v1/users/token",
+          "https://the-social-key-api.vercel.app/api/v1/users/token",
           { withCredentials: true }
         );
         if (response.data.userInfo) {
@@ -106,7 +106,7 @@ const DashBoard = () => {
   useEffect(() => {
     const fetchPosts = async () => {
       const response = await axios.get(
-        `http://localhost:5555/api/v1/posts/user/${currentUser?.username}`
+        `https://the-social-key-api.vercel.app/api/v1/posts/user/${currentUser?.username}`
       );
       setUserPosts(response?.data?.postInfo);
     };
@@ -124,14 +124,14 @@ const DashBoard = () => {
     try {
       setIsProcessingPayment(true);
       const userResponse = await axios.get(
-        "http://localhost:5555/api/v1/users/token",
+        "https://the-social-key-api.vercel.app/api/v1/users/token",
         { withCredentials: true }
       );
       if (userResponse.data.userInfo) {
         dispatch(setUserInfo(userResponse.data.userInfo));
       }
       const response = await axios.post(
-        "http://localhost:5555/api/v1/payments/pay",
+        "https://the-social-key-api.vercel.app/api/v1/payments/pay",
         {
           credits,
           totalPrice,
@@ -199,7 +199,7 @@ const DashBoard = () => {
     const fetchLatestFollower = async () => {
       if (latestFollower) {
         const response = await axios.get(
-          `http://localhost:5555/api/v1/users/userInfo/${latestFollower}`
+          `https://the-social-key-api.vercel.app/api/v1/users/userInfo/${latestFollower}`
         );
         setRecentFollower(response.data.userExists);
       }
@@ -207,7 +207,7 @@ const DashBoard = () => {
     const fetchLatestLike = async () => {
       if (latestLike) {
         const response = await axios.get(
-          `http://localhost:5555/api/v1/users/userInfo/${latestLike}`
+          `https://the-social-key-api.vercel.app/api/v1/users/userInfo/${latestLike}`
         );
         setRecentLike(response.data.userExists);
       }
@@ -215,7 +215,7 @@ const DashBoard = () => {
     const fetchLatestComment = async () => {
       if (latestComment) {
         const response = await axios.get(
-          `http://localhost:5555/api/v1/users/userInfo/${latestComment}`
+          `https://the-social-key-api.vercel.app/api/v1/users/userInfo/${latestComment}`
         );
         setRecentReply(response.data.userExists);
       }

@@ -30,7 +30,7 @@ const ProfileHead = ({ userProfileData }) => {
     try {
       const currentUrl = window.location.href;
       const response = await axios.post(
-        "http://localhost:5555/api/v1/users/qrCode",
+        "https://the-social-key-api.vercel.app/api/v1/users/qrCode",
         {
           currentUrl,
           username: userProfileData?.username || username,
@@ -62,7 +62,7 @@ const ProfileHead = ({ userProfileData }) => {
   const handleFollowUnfollow = async () => {
     try {
       const response = await axios.post(
-        `http://localhost:5555/api/v1/users/follow/${userProfileData?._id}`,
+        `https://the-social-key-api.vercel.app/api/v1/users/follow/${userProfileData?._id}`,
         {},
         { withCredentials: true }
       );

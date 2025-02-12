@@ -20,7 +20,7 @@ const Home = () => {
   useEffect(() => {
     const checkLoginStatus = async () => {
       const response = await axios.get(
-        "http://localhost:5555/api/v1/users/token",
+        "https://the-social-key-api.vercel.app/api/v1/users/token",
         {
           withCredentials: true, // Ensure credentials are sent with the request
         }

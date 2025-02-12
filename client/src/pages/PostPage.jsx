@@ -34,7 +34,7 @@ const PostPage = () => {
       try {
         setLoading(true);
         const response = await axios.get(
-          `http://localhost:5555/api/v1/posts/${pid}`,
+          `https://the-social-key-api.vercel.app/api/v1/posts/${pid}`,
           { withCredentials: true }
         );
         if (response.data && response.data.postInfo) {
@@ -56,7 +56,7 @@ const PostPage = () => {
     const retrieveUser = async () => {
       if (!userInfo || Object.keys(userInfo).length === 0) {
         const response = await axios.get(
-          "http://localhost:5555/api/v1/users/token",
+          "https://the-social-key-api.vercel.app/api/v1/users/token",
           { withCredentials: true }
         );
         if (response.data.userInfo) {
@@ -73,9 +73,9 @@ const PostPage = () => {
       try {
         setVoiceLoading(true);
         const response = await axios.post(
-          "http://localhost:5555/api/v1/posts/tts",
+          "https://the-social-key-api.vercel.app/api/v1/posts/tts",
           { prompt: currentPost.text },
-          {withCredentials: true}
+          { withCredentials: true }
         );
         const audioResponseArray = await response.data.data.data;
         const encodedArray = new Uint8Array(audioResponseArray);
@@ -112,14 +112,14 @@ const PostPage = () => {
     console.log(comment);
     try {
       const response = await axios.put(
-        `http://localhost:5555/api/v1/posts/reply/${currentPost._id}`,
+        `https://the-social-key-api.vercel.app/api/v1/posts/reply/${currentPost._id}`,
         { text: userComment },
         { withCredentials: true }
       );
       enqueueSnackbar(response.data.message, { variant: "success" });
       setComment(false);
       const newPostResponse = await axios.get(
-        `http://localhost:5555/api/v1/posts/${pid}`
+        `https://the-social-key-api.vercel.app/api/v1/posts/${pid}`
       );
       setCurrentPost(newPostResponse.data.postInfo);
       setComment(!comment);

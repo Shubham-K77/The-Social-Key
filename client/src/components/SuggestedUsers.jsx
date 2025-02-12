@@ -15,7 +15,7 @@ const SuggestedUsers = () => {
       setLoading(true);
       try {
         const response = await axios.get(
-          "http://localhost:5555/api/v1/users/suggested",
+          "https://the-social-key-api.vercel.app/api/v1/users/suggested",
           { withCredentials: true }
         );
         const usersWithFollowState = response?.data?.suggestedUsers.map(
@@ -40,7 +40,7 @@ const SuggestedUsers = () => {
   const followUnfollow = async (userId) => {
     try {
       const response = await axios.post(
-        `http://localhost:5555/api/v1/users/follow/${userId}`,
+        `https://the-social-key-api.vercel.app/api/v1/users/follow/${userId}`,
         {},
         { withCredentials: true }
       );

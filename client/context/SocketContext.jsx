@@ -12,7 +12,7 @@ export const SocketContextProvider = ({ children }) => {
   const currentUser = useSelector((state) => state.user.userInfo);
   const [onlineUsers, setOnlineUsers] = useState([]);
   useEffect(() => {
-    const socket = io("http://localhost:5555", {
+    const socket = io("https://the-social-key-api.vercel.app", {
       query: {
         userId: currentUser?._id,
       },

@@ -30,7 +30,7 @@ const UserProfile = () => {
   useEffect(() => {
     const fetchUser = async () => {
       const response = await axios.get(
-        "http://localhost:5555/api/v1/users/token",
+        "https://the-social-key-api.vercel.app/api/v1/users/token",
         { withCredentials: true }
       );
       if (response.data.userInfo) {
@@ -45,7 +45,7 @@ const UserProfile = () => {
       setLoading(true);
       try {
         const profileResponse = await axios.get(
-          `http://localhost:5555/api/v1/users/profile/${username}`
+          `https://the-social-key-api.vercel.app/api/v1/users/profile/${username}`
         );
         if (
           !profileResponse.data.userExists ||
@@ -62,7 +62,7 @@ const UserProfile = () => {
           setUserExist(true);
           // Fetch user posts
           const postsResponse = await axios.get(
-            `http://localhost:5555/api/v1/posts/user/${username}`,
+            `https://the-social-key-api.vercel.app/api/v1/posts/user/${username}`,
             { withCredentials: true }
           );
           setPostInfo(postsResponse.data.postInfo || []);

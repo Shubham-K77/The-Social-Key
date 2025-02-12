@@ -17,7 +17,7 @@ const LoginPage = () => {
   useEffect(() => {
     const checkLoginStatus = async () => {
       const response = await axios.get(
-        "http://localhost:5555/api/v1/users/token",
+        "https://the-social-key-api.vercel.app/api/v1/users/token",
         {
           withCredentials: true,
         }
@@ -34,14 +34,17 @@ const LoginPage = () => {
     try {
       setLoading(true);
       let response = await axios.post(
-        "http://localhost:5555/api/v1/users/login",
+        "https://the-social-key-api.vercel.app/api/v1/users/login",
         { username, password },
         { withCredentials: true }
       );
       enqueueSnackbar(response.data.message, { variant: "success" });
-      response = await axios.get("http://localhost:5555/api/v1/users/token", {
-        withCredentials: true,
-      });
+      response = await axios.get(
+        "https://the-social-key-api.vercel.app/api/v1/users/token",
+        {
+          withCredentials: true,
+        }
+      );
       dispatch(setUserInfo(response.data.userInfo));
       setUsername("");
       setPassword("");

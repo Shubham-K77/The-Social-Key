@@ -54,7 +54,7 @@ const Chat = () => {
       if (!currentUser || Object.keys(currentUser).length === 0) {
         try {
           const response = await axios.get(
-            "http://localhost:5555/api/v1/users/token",
+            "https://the-social-key-api.vercel.app/api/v1/users/token",
             { withCredentials: true }
           );
           if (response.data.userInfo) {
@@ -78,7 +78,7 @@ const Chat = () => {
     const fetchConversation = async () => {
       try {
         const response = await axios.get(
-          "http://localhost:5555/api/v1/messages/conversations",
+          "https://the-social-key-api.vercel.app/api/v1/messages/conversations",
           { withCredentials: true }
         );
         dispatch(setConversations(response?.data?.conversation));
@@ -99,7 +99,7 @@ const Chat = () => {
     setSearchLoading(true);
     try {
       const response = await axios.get(
-        `http://localhost:5555/api/v1/users/profile/${search}`
+        `https://the-social-key-api.vercel.app/api/v1/users/profile/${search}`
       );
       const searchedUser = response.data.userExists;
       console.log("Searched User:", searchedUser); // Log the searched user data

@@ -43,7 +43,7 @@ const FeedPage = () => {
       if (!userInfo || Object.keys(userInfo).length === 0) {
         try {
           const response = await axios.get(
-            "http://localhost:5555/api/v1/users/token",
+            "https://the-social-key-api.vercel.app/api/v1/users/token",
             { withCredentials: true }
           );
           if (response.data.userInfo) {
@@ -64,7 +64,7 @@ const FeedPage = () => {
       try {
         setFeedLoading(true);
         const response = await axios.get(
-          "http://localhost:5555/api/v1/posts/feed",
+          "https://the-social-key-api.vercel.app/api/v1/posts/feed",
           { withCredentials: true }
         );
         setFeedPost(response.data.feedPost);
@@ -96,7 +96,7 @@ const FeedPage = () => {
       if (AIText.length > 20) {
         setLoading(true);
         const response = await axios.post(
-          "http://localhost:5555/api/v1/posts/tti",
+          "https://the-social-key-api.vercel.app/api/v1/posts/tti",
           { prompt: AIText },
           { withCredentials: true }
         );
@@ -142,7 +142,7 @@ const FeedPage = () => {
   const handleLogout = async () => {
     try {
       const response = await axios.post(
-        "http://localhost:5555/api/v1/users/logout",
+        "https://the-social-key-api.vercel.app/api/v1/users/logout",
         {},
         { withCredentials: true }
       );
@@ -160,7 +160,7 @@ const FeedPage = () => {
     try {
       setPostLoading(true);
       const response = await axios.post(
-        "http://localhost:5555/api/v1/posts/create",
+        "https://the-social-key-api.vercel.app/api/v1/posts/create",
         { postedBy: userInfo._id, text: postText, img: postImg, postType },
         { withCredentials: true }
       );

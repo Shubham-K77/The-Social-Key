@@ -18,7 +18,7 @@ const UserPost = ({ post: initialPost, setFeedPost }) => {
     const fetchPost = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:5555/api/v1/posts/${currentPost._id}`
+          `https://the-social-key-api.vercel.app/api/v1/posts/${currentPost._id}`
         );
         setCurrentPost(response.data.postInfo);
       } catch (error) {
@@ -49,14 +49,14 @@ const UserPost = ({ post: initialPost, setFeedPost }) => {
   const handleReplies = async () => {
     try {
       const response = await axios.put(
-        `http://localhost:5555/api/v1/posts/reply/${currentPost._id}`,
+        `https://the-social-key-api.vercel.app/api/v1/posts/reply/${currentPost._id}`,
         { text: userComment },
         { withCredentials: true }
       );
       enqueueSnackbar(response.data.message, { variant: "success" });
       setComment(false);
       const newPostResponse = await axios.get(
-        `http://localhost:5555/api/v1/posts/${currentPost._id}`
+        `https://the-social-key-api.vercel.app/api/v1/posts/${currentPost._id}`
       );
       setCurrentPost(newPostResponse.data.postInfo);
       setComment(!comment);

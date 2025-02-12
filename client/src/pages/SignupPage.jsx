@@ -77,7 +77,7 @@ const SignupPage = () => {
     try {
       setLoading(true);
       const response = await axios.post(
-        "http://localhost:5555/api/v1/users/register",
+        "https://the-social-key-api.vercel.app/api/v1/users/register",
         { name, username, email, password }
       );
       enqueueSnackbar(response.data.message, {
@@ -112,7 +112,7 @@ const SignupPage = () => {
     try {
       setLoading(true);
       const response = await axios.post(
-        "http://localhost:5555/api/v1/users/validateOtp",
+        "https://the-social-key-api.vercel.app/api/v1/users/validateOtp",
         { username, otp }
       );
       enqueueSnackbar(response.data.message, { variant: "success" });
@@ -128,7 +128,7 @@ const SignupPage = () => {
   useEffect(() => {
     const checkLoginStatus = async () => {
       const response = await axios.get(
-        "http://localhost:5555/api/v1/users/token",
+        "https://the-social-key-api.vercel.app/api/v1/users/token",
         {
           withCredentials: true,
         }

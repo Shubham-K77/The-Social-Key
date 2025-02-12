@@ -22,7 +22,7 @@ const Icons = ({ post, onPostUpdate }) => {
     try {
       const currentUrl = `http://localhost:5173/${post.postedBy.username}/post/${post._id}`;
       const response = await axios.post(
-        "http://localhost:5555/api/v1/users/qrCode",
+        "https://the-social-key-api.vercel.app/api/v1/users/qrCode",
         {
           currentUrl,
           type: "post",
@@ -48,7 +48,7 @@ const Icons = ({ post, onPostUpdate }) => {
       return enqueueSnackbar("Login To Like A Post!", { variant: "error" });
     try {
       const response = await axios.put(
-        `http://localhost:5555/api/v1/posts/like/${post._id}`,
+        `https://the-social-key-api.vercel.app/api/v1/posts/like/${post._id}`,
         {},
         { withCredentials: true }
       );
@@ -78,7 +78,7 @@ const Icons = ({ post, onPostUpdate }) => {
     try {
       if (!window.confirm("Are you sure want to delete this post? ")) return;
       const response = await axios.delete(
-        `http://localhost:5555/api/v1/posts/${post._id}`,
+        `https://the-social-key-api.vercel.app/api/v1/posts/${post._id}`,
         { withCredentials: true }
       );
       enqueueSnackbar(response.data.message, { variant: "success" });
