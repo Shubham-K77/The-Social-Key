@@ -11,9 +11,10 @@ const generateToken = (req, res, next, payload) => {
   }
   res.cookie("authToken", token, {
     httpOnly: true,
-    secure: false,
-    maxAge: 3600000,
-    sameSite: "strict", //CSRF
+    secure: true,
+    sameSite: "none",
+    path: "/",
+    maxAge: 24 * 60 * 60 * 1000,
   });
   return token;
 };
