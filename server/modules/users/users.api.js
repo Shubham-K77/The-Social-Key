@@ -143,10 +143,12 @@ userRouter.post("/logout", tokenCheck, (req, res, next) => {
   try {
     res.cookie("authToken", "", {
       httpOnly: true,
-      secure: false,
-      sameSite: "strict", //CSRF
+      secure: true,
+      sameSite: "none",
+      path: "/",
       maxAge: 0,
     });
+
     res.status(200).send({ message: "Successfully Logged Out!" });
   } catch (error) {
     error.message = "Internal Error!";
