@@ -14,7 +14,7 @@ const generateToken = (req, res, next, payload) => {
     secure: true,
     sameSite: "none",
     path: "/",
-    maxAge: 24 * 60 * 60 * 1000,
+    maxAge: 60 * 60 * 1000,
   });
   return token;
 };
