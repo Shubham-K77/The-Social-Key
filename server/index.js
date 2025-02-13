@@ -14,20 +14,13 @@ const dbUrl = process.env.mongoDbUrl;
 //MIDDLEWARES:
 app.use(express.json({ limit: "50mb" }));
 app.use(express.urlencoded({ limit: "50mb", extended: true }));
-app.use(
-  cors({
-    origin: "https://the-social-key.vercel.app",
-    credentials: true,
-    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-    allowedHeaders: [
-      "Content-Type",
-      "Authorization",
-      "X-Requested-With",
-      "Accept",
-      "Origin",
-    ],
-  })
-);
+app.use(cors({
+  origin: "https://the-social-key.vercel.app",
+  credentials: true,
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"],
+  exposedHeaders: ["set-cookie"]
+}));
 app.use(cookie());
 app.use("/", router);
 app.use(notFound);
